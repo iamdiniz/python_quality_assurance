@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Register · Bootstrap</title>
+
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .form-signin {
+        max-width: 330px;
+        padding: 15px;
+      }
+      .form-signin h1 {
+        text-align: left;
+      }
+      .form-floating {
+        margin-bottom: -1px;
+      }
+    </style>
+  </head>
+  <body class="bg-body-tertiary">
+    <main class="form-signin w-100 m-auto">
+      <form method="POST" action="/register">
+        <h1 class="h3 mb-3 fw-normal">Please register</h1>
+
+        <div class="form-floating">
+          <input type="text" class="form-control rounded-top" id="floatingName" name="name" placeholder="John Doe" required>
+          <label for="floatingName">Name</label>
+        </div>
+
+        <div class="form-floating">
+          <input type="email" class="form-control" id="floatingEmail" name="email" placeholder="name@example.com" required>
+          <label for="floatingEmail">Email address</label>
+        </div>
+
+        <div class="form-floating">
+          <input type="password" class="form-control rounded-bottom" id="floatingPassword" name="password" placeholder="Password" required>
+          <label for="floatingPassword">Password</label>
+        </div>
+
+        <!-- Adiciona espaçamento apenas para o botão -->
+        <button class="btn btn-primary w-100 py-2 mt-3" type="submit">Register</button>
+        <p class="mt-5 mb-3 text-body-secondary">&copy; QA</p>
+      </form>
+    </main>
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
