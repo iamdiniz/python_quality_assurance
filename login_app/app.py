@@ -26,7 +26,7 @@ class Userr(db.Model):
 with app.app_context():
     db.create_all()
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
@@ -36,7 +36,6 @@ def login():
         
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
-            flash('Login successful!', 'success')
             return redirect(url_for('home'))
         else:
             flash('Invalid email or password. Please try again.', 'danger')
@@ -50,6 +49,11 @@ def register():
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
+
+        # Check if the email is already registered
+        if Userr.query.filter_by(email=email).first():
+            flash('Email address already exists.', 'danger')
+            return redirect(url_for('register'))
         
         password_hash = generate_password_hash(password)
         new_user = Userr(name=name, email=email, password=password_hash)
