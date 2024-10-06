@@ -32,7 +32,7 @@
         <form method="POST" action="/register">
             <h1 class="h3 mb-3 fw-normal">Please register</h1>
 
-            <!-- Exibe mensagens de erro se houver -->
+            <!-- Display error messages if any -->
             {% with messages = get_flashed_messages(with_categories=True) %}
                 {% if messages %}
                     {% for category, message in messages %}
@@ -59,7 +59,7 @@
                 <label for="floatingPassword">Password</label>
             </div>
 
-            <!-- Adiciona espaçamento apenas para o botão -->
+            <!-- Adds spacing only for the button -->
             <button class="btn btn-primary w-100 py-2 mt-3" type="submit">Register</button>
             <p class="mt-5 mb-3 text-body-secondary">&copy; QA</p>
         </form>

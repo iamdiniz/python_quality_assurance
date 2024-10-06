@@ -1,4 +1,5 @@
 import re
+from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,8 +11,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:1234567@localhost/training
 
 db = SQLAlchemy(app)
 
-class Userr(db.Model):
-    __tablename__ = 'userr'
+class User(db.Model):
+    __tablename__ = 'user'
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
@@ -23,9 +24,19 @@ class Userr(db.Model):
         self.email = email
         self.password = password
 
-# Criação da tabela se não existir
+# Create the table if it doesn't exist
 with app.app_context():
     db.create_all()
+
+# Decorator para verificar se o usuário está logado
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('login')), 401  # Retorna o status code 401 (Unauthorized)
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -33,7 +44,7 @@ def login():
         email = request.form['email']
         password = request.form['password']
         
-        user = Userr.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
         
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
@@ -51,48 +62,49 @@ def register():
         email = request.form['email']
         password = request.form['password']
 
-        # Verifica se o nome começa com um número
+        # Check if the name starts with a number
         if name[0].isdigit():
-            flash('O nome não pode começar com um número.', 'danger')
+            flash('The name cannot start with a number.', 'danger')
             return redirect(url_for('register'))
         
-        # Verifica se o email já está registrado
-        if Userr.query.filter_by(email=email).first():
-            flash('Endereço de email já existe.', 'danger')
+        # Check if the email is already registered
+        if User.query.filter_by(email=email).first():
+            flash('Email address already exists.', 'danger')
             return redirect(url_for('register'))
 
-        # Valida o formato do email
+        # Validate the email format
         if not validate_email(email):
-            flash('Formato de email inválido.', 'danger')
+            flash('Invalid email format.', 'danger')
             return redirect(url_for('register'))
 
-        # Valida a senha
+        # Validate the password
         if len(password) < 8:
-            flash('A senha deve ter pelo menos 8 caracteres.', 'danger')
+            flash('Password must be at least 8 characters long.', 'danger')
             return redirect(url_for('register'))
 
         password_hash = generate_password_hash(password)
-        new_user = Userr(name=name, email=email, password=password_hash)
+        new_user = User(name=name, email=email, password=password_hash)
         
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash('Conta criada com sucesso! Por favor, faça login.', 'success')
+            flash('Account created successfully! Please log in.', 'success')
             return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()
-            flash('Ocorreu um erro ao criar sua conta. Por favor, tente novamente.', 'danger')
+            flash('An error occurred while creating your account. Please try again.', 'danger')
             return redirect(url_for('register'))
 
     return render_template('register.html')
 
 def validate_email(email):
     import re
-    # Valida se o email possui o formato correto
+    # Validate if the email has the correct format
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(email_regex, email) is not None
 
 @app.route("/home")
+@login_required
 def home():
     if 'user_id' in session:
         return render_template('home.html')
