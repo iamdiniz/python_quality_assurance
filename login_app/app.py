@@ -1,3 +1,4 @@
+import re
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -50,25 +51,46 @@ def register():
         email = request.form['email']
         password = request.form['password']
 
-        # Check if the email is already registered
-        if Userr.query.filter_by(email=email).first():
-            flash('Email address already exists.', 'danger')
+        # Verifica se o nome começa com um número
+        if name[0].isdigit():
+            flash('O nome não pode começar com um número.', 'danger')
             return redirect(url_for('register'))
         
+        # Verifica se o email já está registrado
+        if Userr.query.filter_by(email=email).first():
+            flash('Endereço de email já existe.', 'danger')
+            return redirect(url_for('register'))
+
+        # Valida o formato do email
+        if not validate_email(email):
+            flash('Formato de email inválido.', 'danger')
+            return redirect(url_for('register'))
+
+        # Valida a senha
+        if len(password) < 8:
+            flash('A senha deve ter pelo menos 8 caracteres.', 'danger')
+            return redirect(url_for('register'))
+
         password_hash = generate_password_hash(password)
         new_user = Userr(name=name, email=email, password=password_hash)
         
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash('Account created successfully! Please log in.', 'success')
+            flash('Conta criada com sucesso! Por favor, faça login.', 'success')
             return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()
-            flash('An error occurred while creating your account. Please try again.', 'danger')
+            flash('Ocorreu um erro ao criar sua conta. Por favor, tente novamente.', 'danger')
             return redirect(url_for('register'))
 
     return render_template('register.html')
+
+def validate_email(email):
+    import re
+    # Valida se o email possui o formato correto
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(email_regex, email) is not None
 
 @app.route("/home")
 def home():
