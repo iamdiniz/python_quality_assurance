@@ -28,13 +28,13 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
-# Decorator para verificar se o usuário está logado
+# Decorator to verify if the user is logged in
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
             flash('Please log in to access this page.', 'warning')
-            return redirect(url_for('login')), 401  # Retorna o status code 401 (Unauthorized)
+            return redirect(url_for('login')), 401  # Return 401 (Unauthorized)
         return f(*args, **kwargs)
     return decorated_function
 
@@ -62,22 +62,18 @@ def register():
         email = request.form['email']
         password = request.form['password']
 
-        # Check if the name starts with a number
         if name[0].isdigit():
             flash('The name cannot start with a number.', 'danger')
             return redirect(url_for('register'))
-        
-        # Check if the email is already registered
+
         if User.query.filter_by(email=email).first():
             flash('Email address already exists.', 'danger')
             return redirect(url_for('register'))
 
-        # Validate the email format
         if not validate_email(email):
             flash('Invalid email format.', 'danger')
             return redirect(url_for('register'))
 
-        # Validate the password
         if len(password) < 8:
             flash('Password must be at least 8 characters long.', 'danger')
             return redirect(url_for('register'))
@@ -98,20 +94,23 @@ def register():
     return render_template('register.html')
 
 def validate_email(email):
-    import re
-    # Validate if the email has the correct format
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(email_regex, email) is not None
 
+# Route to display user names on the home page
 @app.route("/home")
 @login_required
 def home():
-    if 'user_id' in session:
-        return render_template('home.html')
-    else:
-        flash('Please log in to access this page.', 'warning')
-        return redirect(url_for('login'))
-    
+    users = User.query.all()  # Fetch all users from the database
+    return render_template('home.html', users=users)
+
+# Route to return user data as JSON (for Postman or API access)
+@app.route("/api/users", methods=['GET'])
+def get_users_json():
+    users = User.query.all()
+    user_list = [{"id": user.id, "name": user.name, "email": user.email} for user in users]
+    return jsonify(user_list)
+
 @app.route("/logout")
 def logout():
     session.pop('user_id', None)
