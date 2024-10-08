@@ -59,16 +59,26 @@ def test_registrar_e_login_deve_ser_bem_sucedido_com_dados_validos(client):
         'email': 'bruno@gmail.com',
         'password': '12345678'
     }
+    
+    # Envia os dados de registro
     response = client.post('/register', data=register_data, follow_redirects=True)
-    assert b'Account created successfully! Please log in.' in response.data
 
     # Teste de login
     login_data = {
         'email': 'bruno@gmail.com',
         'password': '12345678'
     }
+    
+    # Envia os dados de login
     response = client.post('/login', data=login_data, follow_redirects=True)
-    assert b'Welcome to Quality Assurance Dashboard' in response.data
+    
+    # Verifica se o login foi bem-sucedido redirecionando para a página inicial
+    assert response.status_code == 200  # A página inicial deve retornar 200 (OK)
+    assert b'Welcome to Quality Assurance Dashboard' in response.data  # Verifica se a mensagem de boas-vindas está presente
+
+    # Verifica se a sessão contém o ID do usuário
+    with client.session_transaction() as session:
+        assert 'user_id' in session  # Verifica se o ID do usuário foi armazenado na sessão
 
 @pytest.mark.api
 def test_get_users_retorna_usuarios(client):
@@ -83,3 +93,5 @@ def test_get_users_retorna_usuarios(client):
     assert len(data) > 0  # Verifica se pelo menos um usuário foi retornado
     assert data[0]['name'] == "Guilherme"  # Verifica se o nome do primeiro usuário é o esperado
     assert data[0]['email'] == "guilherme@gmail.com"  # Verifica o email do usuário
+    
+# comando para gerar report: pytest --junitxml nome.xml

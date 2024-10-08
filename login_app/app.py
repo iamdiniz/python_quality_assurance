@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.secret_key = 'daa351b615c916ff50121245a9f807b9'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:1234567@localhost/training'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/training'
 
 db = SQLAlchemy(app)
 

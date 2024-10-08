@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Testes</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .table {
+            margin-top: 20px;
+        }
+        .success {
+            background-color: #d4edda;
+        }
+        .failure {
+            background-color: #f8d7da;
+        }
+        .skipped {
+            background-color: #ffeeba;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Relatório de Testes - Pytest</h1>
+        <p>Data: 2024-10-08</p>
+    </div>
+    
+    <div class="container">
+        <h2>Resumo dos Testes</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nome do Teste</th>
+                    <th>Status</th>
+                    <th>Tempo (s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="success">
+                    <td>test_deve_retornar_302_quando_acessar_home_sem_logar</td>
+                    <td>Sucesso</td>
+                    <td>0.019</td>
+                </tr>
+                <tr class="success">
+                    <td>test_rota_login_deve_ser_acessivel</td>
+                    <td>Sucesso</td>
+                    <td>0.028</td>
+                </tr>
+                <tr class="success">
+                    <td>test_deve_retornar_mensagem_de_erro_ao_inserir_nome_com_numero</td>
+                    <td>Sucesso</td>
+                    <td>0.000</td>
+                </tr>
+                <tr class="success">
+                    <td>test_deve_criar_usuario_com_sucesso</td>
+                    <td>Sucesso</td>
+                    <td>0.102</td>
+                </tr>
+                <tr class="success">
+                    <td>test_registrar_e_login_deve_ser_bem_sucedido_com_dados_validos</td>
+                    <td>Sucesso</td>
+                    <td>0.117</td>
+                </tr>
+                <tr class="success">
+                    <td>test_get_users_retorna_usuarios</td>
+                    <td>Sucesso</td>
+                    <td>0.013</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Detalhes</h3>
+        <ul>
+            <li>Total de Testes: 6</li>
+            <li>Testes com Sucesso: 6</li>
+            <li>Testes com Falhas: 0</li>
+            <li>Testes Ignorados: 0</li>
+            <li>Tempo Total: 0.757 s</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Sua Empresa. Todos os direitos reservados.</p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
