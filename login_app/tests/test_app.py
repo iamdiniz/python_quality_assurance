@@ -36,3 +36,14 @@ def test_validate_name():
 
     assert validate_name(valid_name) == (True, "")  # Espera-se que o nome válido retorne True
     assert validate_name(invalid_name) == (False, "The name cannot start with a number.")  # Espera-se que o nome inválido retorne False
+
+@mark.create
+def test_create_user():
+    # Criação de um usuário manualmente
+    user = User(name="Guilherme", email="guilherme@gmail.com", password=generate_password_hash("12345678"))
+    
+    # Testar se o usuário foi criado corretamente
+    assert user.name == "Guilherme"
+    assert user.email == "guilherme@gmail.com"
+    assert user.password != "12345678"  # Senha deve estar hasheada
+
