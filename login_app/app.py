@@ -28,13 +28,12 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
-# Decorator to verify if the user is logged in
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
-            flash('Please log in to access this page.', 'warning')
-            return redirect(url_for('login')), 401  # Return 401 (Unauthorized)
+            flash('Please log in to access this page.', 'warning')  # Mensagem de aviso
+            return redirect(url_for('login'))  # Redireciona para a página de login
         return f(*args, **kwargs)
     return decorated_function
 
@@ -105,11 +104,15 @@ def home():
     return render_template('home.html', users=users)
 
 # Route to return user data as JSON (for Postman or API access)
-@app.route("/api/users", methods=['GET'])
-def get_users_json():
-    users = User.query.all()
-    user_list = [{"id": user.id, "name": user.name, "email": user.email} for user in users]
-    return jsonify(user_list)
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    try:
+        users = User.query.all()
+        result = [{"name": user.name, "email": user.email} for user in users]
+        return jsonify(result), 200
+    except Exception as e:
+        app.logger.error(f"Error fetching users: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
 
 @app.route("/logout")
 def logout():
